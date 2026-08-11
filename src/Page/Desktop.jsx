@@ -34,7 +34,6 @@ export default function Desktop() {
           </nav>
         </div>
 
-        {/* Profile & Logout Action */}
         <div className="flex items-center gap-4">
           <Link
             to="/profile"
@@ -65,7 +64,6 @@ export default function Desktop() {
         </div>
       </header>
 
-      {/* Main Desktop Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
         <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">
           <h2 className="text-2xl font-bold text-white mb-2">

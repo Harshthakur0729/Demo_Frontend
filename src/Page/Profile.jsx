@@ -17,14 +17,10 @@ export default function Profile() {
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
-  // Helper Function: LocalStorage se token nikal kar Auth Header banana
   const getAuthHeaders = () => {
-    // Agar aapne token 'userToken' ya 'jwtToken' kisi bhi naam se save kiya ho
     const token = localStorage.getItem('userToken') || localStorage.getItem('jwtToken') || localStorage.getItem('token');
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
-
-  // 1. Fetch Profile Data (GET)
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -34,7 +30,7 @@ export default function Profile() {
     setError('');
     try {
       const response = await axios.get(`${API}/users/profile`, {
-        headers: getAuthHeaders(), // Authorization Header Added
+        headers: getAuthHeaders(),
         withCredentials: true,
       });
       console.log("Profile Fetch Response:", response);
@@ -50,7 +46,6 @@ export default function Profile() {
     }
   };
 
-  // 2. Update Profile Data (PUT)
   const handleUpdate = async (e) => {
     e.preventDefault();
     setUpdating(true);
@@ -77,7 +72,6 @@ export default function Profile() {
     }
   };
 
-  // 3. Delete Profile (DELETE)
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete your account? This action cannot be undone.'
@@ -93,7 +87,6 @@ export default function Profile() {
         withCredentials: true,
       });
 
-      // Clear local auth tokens and redirect to login
       localStorage.removeItem('userToken');
       localStorage.removeItem('jwtToken');
       window.location.href = '/login';
@@ -103,7 +96,6 @@ export default function Profile() {
     }
   };
 
-  // Helper for Error Formatting
   const handleError = (err, fallbackMsg) => {
     if (err.response) {
       setError(err.response.data?.message || `HTTP Error ${err.response.status}: ${fallbackMsg}`);
