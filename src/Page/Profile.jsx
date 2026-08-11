@@ -17,6 +17,13 @@ export default function Profile() {
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
+  // Helper Function: LocalStorage se token nikal kar Auth Header banana
+  const getAuthHeaders = () => {
+    // Agar aapne token 'userToken' ya 'jwtToken' kisi bhi naam se save kiya ho
+    const token = localStorage.getItem('userToken') || localStorage.getItem('jwtToken') || localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   // 1. Fetch Profile Data (GET)
   useEffect(() => {
     fetchProfile();
@@ -27,9 +34,10 @@ export default function Profile() {
     setError('');
     try {
       const response = await axios.get(`${API}/users/profile`, {
+        headers: getAuthHeaders(), // Authorization Header Added
         withCredentials: true,
       });
-      console.log("data", response);
+      console.log("Profile Fetch Response:", response);
 
       const data = response.data?.data || response.data;
       setProfileData({ username: data.username || '', email: data.email || '' });
@@ -51,6 +59,7 @@ export default function Profile() {
 
     try {
       const response = await axios.put(`${API}/users/profile`, editData, {
+        headers: getAuthHeaders(), // Authorization Header Added
         withCredentials: true,
       });
 
@@ -80,11 +89,13 @@ export default function Profile() {
 
     try {
       await axios.delete(`${API}/users/profile`, {
+        headers: getAuthHeaders(), // Authorization Header Added
         withCredentials: true,
       });
 
       // Clear local auth tokens and redirect to login
       localStorage.removeItem('userToken');
+      localStorage.removeItem('jwtToken');
       window.location.href = '/login';
     } catch (err) {
       handleError(err, 'Failed to delete account.');
@@ -95,7 +106,6 @@ export default function Profile() {
   // Helper for Error Formatting
   const handleError = (err, fallbackMsg) => {
     if (err.response) {
-      // Handles 401 Unauthorized, 403 Forbidden, 400 Bad Request, etc.
       setError(err.response.data?.message || `HTTP Error ${err.response.status}: ${fallbackMsg}`);
     } else if (err.request) {
       setError('Network Error: Server is unreachable.');
@@ -226,7 +236,7 @@ export default function Profile() {
                 type="button"
                 onClick={() => {
                   setIsEditing(false);
-                  setEditData(profileData); // Reset form state
+                  setEditData(profileData);
                 }}
                 className="bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 font-semibold py-2.5 px-4 rounded-xl text-sm transition cursor-pointer"
               >
